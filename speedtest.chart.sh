@@ -28,8 +28,8 @@ speedtest_update() {
     # remember: KEEP IT SIMPLE AND SHORT
     # Get the up and down speed. Parse them into separate values, and drop the Mbps.
     speedtest_output=$(speedtest-cli --single --csv)
-    down=$(echo $speedtest_output | cut -d ',' -f 7 | cut -d '.' -f 1)
-    up=$(echo $speedtest_output | cut -d ',' -f 8 | cut -d '.' -f 1)
+    down=$(echo "$speedtest_output" | cut -d ',' -f 7 | cut -d '.' -f 1)
+    up=$(echo "$speedtest_output" | cut -d ',' -f 8 | cut -d '.' -f 1)
 
     # write the result of the work.
     cat <<VALUESEOF
