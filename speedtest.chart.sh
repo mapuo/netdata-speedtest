@@ -6,7 +6,7 @@ speedtest_update_every=60
 speedtest_priority=100
 
 speedtest_check() {
-    require_cmd speedtest-cli || return 1
+    require_cmd speedtest || return 1
     return 0
 }
 
@@ -27,7 +27,7 @@ speedtest_update() {
     # for each dimension
     # remember: KEEP IT SIMPLE AND SHORT
     # Get the up and down speed. Parse them into separate values, and drop the Mbps.
-    speedtest_output=$(speedtest-cli --single --csv)
+    speedtest_output=$(speedtest --single --csv)
     down=$(echo "$speedtest_output" | cut -d ',' -f 7 | cut -d '.' -f 1)
     up=$(echo "$speedtest_output" | cut -d ',' -f 8 | cut -d '.' -f 1)
 
