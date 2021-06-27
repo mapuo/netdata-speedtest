@@ -24,7 +24,7 @@ speedtest_check() {
 speedtest_create() {
     # create a chart with 2 dimensions and chart for latency
     cat <<EOF
-CHART system.connectionspeed '' "System Connection Speed" "Mbps" "connection speed" system.connectionspeed line $((speedtest_priority + 1)) $speedtest_update_every
+CHART system.connectionspeed '' "System Connection Speed" "Mbps" "connection speed" system.connectionspeed area $((speedtest_priority + 1)) $speedtest_update_every
 DIMENSION down 'Down' absolute 1 1000000
 DIMENSION up 'Up' absolute 1 1000000
 CHART system.connectionlatency '' "Connection Latency" "ms" "connection speed" system.connectionspeed line $((speedtest_priority + 1)) $speedtest_update_every
@@ -54,7 +54,7 @@ speedtest_update() {
     cat <<VALUESEOF
 BEGIN system.connectionspeed
 SET down = $down
-SET up = $up
+SET up = -$up
 END
 BEGIN system.connectionlatency
 SET latency = $latency
