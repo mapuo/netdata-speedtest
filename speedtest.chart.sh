@@ -8,6 +8,7 @@ speedtest_tmpfile="/tmp/speedtest_out.tmp"
 
 speedtest_check() {
     require_cmd speedtest || return 1
+    require_cmd bc || return 1
     # flushing temporary file content to something predictable
     echo > $speedtest_tmpfile
     return 0
@@ -15,11 +16,13 @@ speedtest_check() {
 
 
 speedtest_create() {
-    # create a chart with 2 dimensions
+    # create a chart with 2 dimensions and chart for latency
     cat <<EOF
 CHART system.connectionspeed '' "System Connection Speed" "Mbps" "connection speed" system.connectionspeed line $((speedtest_priority + 1)) $speedtest_update_every
 DIMENSION down 'Down' absolute 1 1000000
 DIMENSION up 'Up' absolute 1 1000000
+CHART system.connectionlatency '' "Connection Latency" "ms" "connection speed" system.connectionspeed line $((speedtest_priority + 1)) $speedtest_update_every
+DIMENSION latency 'Latency' absolute 1 1000
 EOF
 
     return 0
@@ -33,9 +36,11 @@ speedtest_update() {
 
     down=0
     up=0
+    latency=0
     if [ -n "$speedtest_output" ]; then
         down=$(echo "$speedtest_output" | cut -d ',' -f 7 | cut -d '.' -f 1)
         up=$(echo "$speedtest_output" | cut -d ',' -f 8 | cut -d '.' -f 1)
+        latency=$(echo "$speedtest_output" | cut -d ',' -f 6 | echo "$(cat -) * 1000" | bc)
     fi
 
     # write the result of the work.
@@ -43,6 +48,9 @@ speedtest_update() {
 BEGIN system.connectionspeed
 SET down = $down
 SET up = $up
+END
+BEGIN system.connectionlatency
+SET latency = $latency
 END
 VALUESEOF
 
